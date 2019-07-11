@@ -1,0 +1,15 @@
+{% extends 'utilities/obj_edit.html' %}
+{% load form_helpers %}
+
+{% block form %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Discovery Request</strong></div>
+        <div class="panel-body">
+            {% render_field form.prefix %}
+            {% render_field form.update_existing %}
+            {% render_field form.platform %}
+            {% render_field form.site %}
+            {% render_field form.device_role %}
+        </div>
+    </div>
+{% endblock %}

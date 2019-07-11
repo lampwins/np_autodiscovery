@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+{% load buttons %}
+
+{% block content %}
+<div class="pull-right noprint">
+    {% if perms.np_autodiscovery.add_discoveryrequest %}
+        {% add_button 'np_autodiscovery:discoveryrequest_add' %}
+    {% endif %}
+    {% export_button content_type %}
+</div>
+<h1>{% block title %}Discovery Requests{% endblock %}</h1>
+<div class="row">
+	<div class="col-md-9">
+        {% include 'utilities/obj_table.html' %}
+    </div>
+    <div class="col-md-3 noprint">
+		{% include 'inc/search_panel.html' %}
+    </div>
+</div>
+{% endblock %}

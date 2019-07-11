@@ -1,0 +1,143 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load tz %}
+{% load custom_links %}
+{% load helpers %}
+
+{% block header %}
+    <div class="row noprint">
+        <div class="col-sm-8 col-md-9">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'np_autodiscovery:discoveryrequest_list' %}">Discovery Requests</a></li>
+                <li>{{ discoveryrequest }}</li>
+            </ol>
+        </div>
+        <div class="col-sm-4 col-md-3">
+            <form action="{% url 'np_autodiscovery:discoveryrequest_list' %}" method="get">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search discovery requests" />
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="fa fa-search" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="pull-right noprint">
+        {% if perms.np_autodiscovery.delete_discoveryrequest %}
+            <a href="{% url 'np_autodiscovery:discoveryrequest_delete' pk=discoveryrequest.pk %}" class="btn btn-danger">
+                <span class="fa fa-trash" aria-hidden="true"></span>
+                Delete this discovery request
+            </a>
+        {% endif %}
+    </div>
+    <h1>{% block title %}{{ discoveryrequest }}{% endblock %}</h1>
+    {% include 'inc/created_updated.html' with obj=discoveryrequest %}
+    <ul class="nav nav-tabs">
+        <li role="presentation"{% if not active_tab %} class="active"{% endif %}>
+            <a href="{{ discoveryrequest.get_absolute_url }}">Discovery Request</a>
+        </li>
+        {% if perms.extras.view_objectchange %}
+            <li role="presentation"{% if active_tab == 'changelog' %} class="active"{% endif %}>
+                <a href="{% url 'np_autodiscovery:discoveryrequest_changelog' pk=discoveryrequest.pk %}">Changelog</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Discovery Request</strong>
+            </div>
+            <table class="table table-hover panel-body attr-table">
+                <tr>
+                    <td>Status</td>
+                    <td>
+                        <span class="label label-{{ discoveryrequest.get_status_class }}">{{ discoveryrequest.get_status_display }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Prefix</td>
+                    <td>
+                        {{ discoveryrequest.prefix }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Platform</td>
+                    <td>
+                        {{ discoveryrequest.platform }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Site</td>
+                    <td>
+                        <a href="{{ discoveryrequest.site.get_absolute_url }}">{{ discoveryrequest.site }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Device role</td>
+                    <td>
+                        {{ discoveryrequest.device_role }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Update Existing Devices</td>
+                    <td>
+                        {% if discoveryrequest.update_existing %}
+                            <i class="glyphicon glyphicon-ok text-success" title="Yes"></i>
+                        {% else %}
+                            <i class="glyphicon glyphicon-remove text-danger" title="No"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Discovery Results</strong>
+            </div>
+            <table class="table table-hover panel-body attr-table">
+                <thead>
+                    <td>Address</td>
+                    <td>Status</td>
+                    <td>Device</td>
+                </thead>
+                <tbody>
+                {% for result in discoveryrequest.results.all %}
+                    
+                        <tr>
+                            <td>
+                                {{ result.address }}
+                            </td>
+                            <td>
+                                <span class="label label-{{ result.get_status_class }}">{{ result.get_status_display }}</span>
+                            </td>
+                            <td>
+                                {% if result.device %}
+                                    <a href="{{ result.device.get_absolute_url }}">{{ result.device }}</a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    
+                {% empty %}
+                    <tr>
+                        <td>None</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
